@@ -6,6 +6,10 @@ using System.Web;
 
 namespace EquipManagement.Models
 {
+    public enum EquipmentStatus{
+        Usable,
+        Unavailable,
+    }
     public class Equipment
     {
         [Key]
@@ -16,6 +20,7 @@ namespace EquipManagement.Models
         public virtual EquipmentType Type { get; set; }
         public int TypeId { get; set; }
         [Display(Name = "购置日期")]
+        [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd}")]
         public DateTime PurchaseDate { get; set; }
         [Display(Name = "图片")]
         public byte[] Image { get; set; }
@@ -23,11 +28,10 @@ namespace EquipManagement.Models
         [Display(Name = "所有人")]
         public virtual ApplicationUser Owner { get; set; }
         public string OwnerId { get; set; }
-        //public int ApplicantId { get; set; }
-        //[Display(Name = "使用人")]
-        //public virtual ApplicationRecord Applicant { get; set; }
         [Display(Name = "使用记录")]
         public virtual ICollection<ApplicationRecord> Records { get; set; }
+        [Display(Name="使用情况")]
+        public EquipmentStatus Status { get; set; }
 
     }
 }

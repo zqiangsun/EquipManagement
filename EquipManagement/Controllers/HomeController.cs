@@ -4,9 +4,9 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
+using EquipManagement.Models;
 namespace EquipManagement.Controllers
 {
-    [Authorize]
     public class HomeController : Controller
     {
     
@@ -14,19 +14,9 @@ namespace EquipManagement.Controllers
         {
             return View();
         }
-
-        public ActionResult About()
-        {
-            ViewBag.Message = "Your application description page.";
-
+        public ActionResult EquipSearch(EquipmentType Type,string Name,string UserId) { 
             return View();
-        }
 
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
         }
     }
 }

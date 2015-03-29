@@ -15,7 +15,7 @@ using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace EquipManagement.Controllers
 {
-    //[Authorize]
+    [Authorize(Roles="Admin")]
     public class AccountController : Controller
     {
         private ApplicationSignInManager _signInManager;

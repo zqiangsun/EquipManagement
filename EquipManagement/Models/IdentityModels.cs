@@ -5,6 +5,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
 namespace EquipManagement.Models
 {
@@ -14,7 +15,10 @@ namespace EquipManagement.Models
         [Index(IsUnique=true)]
         [StringLength(20)]
         [Display(Name="姓名")]
-        public string Name { get; set; }       
+        public string Name { get; set; }
+
+        public virtual ICollection<Equipment> equipments { get; set; }
+
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {
             // 请注意，authenticationType 必须与 CookieAuthenticationOptions.AuthenticationType 中定义的相应项匹配
@@ -37,6 +41,8 @@ namespace EquipManagement.Models
         {
             return new ApplicationDbContext();
         }
+
+        public System.Data.Entity.DbSet<EquipManagement.Models.ApplicationRecord> ApplicationRecords { get; set; }
         //public System.Data.Entity.DbSet<EquipManagement.Models.ApplicationUser> ApplicationUsers { get; set; }
     }
 }

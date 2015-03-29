@@ -22,10 +22,18 @@ namespace EquipManagement
             bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
                       "~/Scripts/bootstrap.js",
                       "~/Scripts/respond.js"));
-
+            
+            bundles.Add(new ScriptBundle("~/bundles/bootstrap-datepicker").Include(
+                "~/Scripts/bootstrap-datepicker.js",
+                "~/Scripts/bootstrap-datepicker.zh-CN.js"
+                ));
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/site.css"));
+            bundles.Add(new StyleBundle("~/Content/bootstrap-datepicker").Include(
+                "~/Content/datepicker3.css"
+                ));
+
         }
     }
 }

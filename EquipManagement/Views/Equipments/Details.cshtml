@@ -1,21 +1,22 @@
 ﻿@model EquipManagement.Models.Equipment
 
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = "设备信息";
 }
 
-<h2>Details</h2>
+<h2>设备信息</h2>
 
 <div>
-    <h4>Equipment</h4>
+    <h4>设备</h4>
     <hr />
     <dl class="dl-horizontal">
+     
         <dt>
-            @Html.DisplayNameFor(model => model.Owner.Name)
+            @Html.DisplayNameFor(model => model.Name)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.Owner.Name)
+            @Html.DisplayFor(model => model.Name)
         </dd>
 
         <dt>
@@ -24,14 +25,6 @@
 
         <dd>
             @Html.DisplayFor(model => model.Type.Name)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Name)
         </dd>
 
         <dt>
@@ -47,12 +40,36 @@
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.Image)
+            <a href="javascript:void(0);" id="Image@(Model.Id)" data-id="@Model.Id" data-name="@Model.Name" data-toggle="modal" data-target="#myModal">查看</a>
+        </dd>
+        <dt>
+            使用记录
+        </dt>
+        <dd>
+            @Html.ActionLink(String.Format("共{0}条使用记录",Model.Records.Count), "Index", "ApplicationRecords", new { id = Model.Id }, new { })
         </dd>
 
     </dl>
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">@Model.Name</h4>
+            </div>
+            <div class="modal-body">
+                <img id="EquipmentImage" src="@(Url.Action("GetImage", new { id=Model.Id}))" style="width:100%;" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("编辑", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("返回列表", "Index")
 </p>

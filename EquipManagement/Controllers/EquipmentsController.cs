@@ -7,21 +7,47 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using EquipManagement.Models;
+using System.IO;
 
 namespace EquipManagement.Controllers
 {
+    [Authorize(Roles="Teacher")]
     public class EquipmentsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
+        public bool Authorize(int? id)
+        {
+            var user = db.Users.Where(u => u.UserName == User.Identity.Name).First();
+            var equipment = db.Equipments.Find(id);
+            if (equipment.Owner.Id != user.Id)
+            {
+                return false;
+            }
+            return true;
+        }
+        public FileContentResult GetImage(int id)
+        {
+            var equipment = db.Equipments.Find(id);
+            if (equipment != null&&equipment.Image!=null)
+            {
+                return File(equipment.Image,"image/png");
+            }
+            else
+            {
+                return null;
+            }
+        }
         // GET: Equipments
         public ActionResult Index()
         {
-            var equipments = db.Equipments.Include(e => e.Owner).Include(e => e.Type);
+            var user=db.Users.Where(u => u.UserName == User.Identity.Name).First();
+            var equipments = db.Equipments.Where(e => e.OwnerId == user.Id).Include(e => e.Type);
             return View(equipments.ToList());
         }
 
         // GET: Equipments/Details/5
+        [AllowAnonymous]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -29,6 +55,7 @@ namespace EquipManagement.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Equipment equipment = db.Equipments.Find(id);
+            var n = equipment.Records.Count();
             if (equipment == null)
             {
                 return HttpNotFound();
@@ -49,10 +76,17 @@ namespace EquipManagement.Controllers
         // 详细信息，请参阅 http://go.microsoft.com/fwlink/?LinkId=317598。
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Name,TypeId,PurchaseDate,Image,OwnerId")] Equipment equipment)
+        public ActionResult Create([Bind(Include = "Id,Name,TypeId,PurchaseDate,OwnerId")] Equipment equipment,HttpPostedFileBase Image)
         {
             if (ModelState.IsValid)
             {
+                equipment.Status = EquipmentStatus.Usable;
+
+                var user = db.Users.Where(u => u.UserName == User.Identity.Name).First();
+                equipment.Owner = user;
+                MemoryStream stream = new MemoryStream();
+                Image.InputStream.CopyTo(stream);
+                equipment.Image = stream.ToArray();
                 db.Equipments.Add(equipment);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -71,9 +105,13 @@ namespace EquipManagement.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Equipment equipment = db.Equipments.Find(id);
+             
             if (equipment == null)
             {
                 return HttpNotFound();
+            }
+            else if(!Authorize(id)){
+                return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
             }
             ViewBag.OwnerId = new SelectList(db.Users, "Id", "Name", equipment.OwnerId);
             ViewBag.TypeId = new SelectList(db.EquipmentTypes, "Id", "Name", equipment.TypeId);
@@ -85,10 +123,21 @@ namespace EquipManagement.Controllers
         // 详细信息，请参阅 http://go.microsoft.com/fwlink/?LinkId=317598。
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Name,TypeId,PurchaseDate,Image,OwnerId")] Equipment equipment)
+        public ActionResult Edit([Bind(Include = "Id,Name,TypeId,PurchaseDate")] Equipment equipment,HttpPostedFileBase Image)
         {
-            if (ModelState.IsValid)
+           
+            if (!Authorize(equipment.Id))
             {
+                return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
+            }
+            else if (ModelState.IsValid)
+            {
+                if (Image != null)
+                {
+                    MemoryStream stream = new MemoryStream();
+                    Image.InputStream.CopyTo(stream);
+                    equipment.Image = stream.ToArray();
+                }
                 db.Entry(equipment).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -104,7 +153,11 @@ namespace EquipManagement.Controllers
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }else if(!Authorize(id))
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
             }
+
             Equipment equipment = db.Equipments.Find(id);
             if (equipment == null)
             {
@@ -118,6 +171,10 @@ namespace EquipManagement.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
+            if (!Authorize(id))
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
+            }
             Equipment equipment = db.Equipments.Find(id);
             db.Equipments.Remove(equipment);
             db.SaveChanges();
