@@ -16,7 +16,7 @@ namespace EquipManagement.Models
         [StringLength(20)]
         [Display(Name="姓名")]
         public string Name { get; set; }
-
+        public string EmailPassword { get; set; }
         public virtual ICollection<Equipment> equipments { get; set; }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)

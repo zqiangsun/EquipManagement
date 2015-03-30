@@ -87,7 +87,7 @@ namespace EquipManagement.Controllers
         {
             if (ModelState.IsValid)
             {
-                equipment.Status = EquipmentStatus.Usable;
+                equipment.Status = false;
 
                 var user = db.Users.Where(u => u.UserName == User.Identity.Name).First();
                 equipment.Owner = user;

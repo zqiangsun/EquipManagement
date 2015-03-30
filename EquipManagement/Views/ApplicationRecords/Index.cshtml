@@ -64,9 +64,27 @@
             </td>
 
             <td>
-                @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                @Html.ActionLink("Details", "Details", new { id = item.Id }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                @if (!item.IsApprove && !item.Equipment.Status)
+                {
+                    <text>
+                        @using (Html.BeginForm("Approve", "ApplicationRecords"))
+                        {
+                            <input type="hidden" name="Id" value="@item.Id" />
+                            <button type="submit" onclick="return confirm('确认审批？');">审批</button>
+                        }
+                    </text>
+                }
+                else if (item.IsApprove && item.Equipment.Status)
+                {
+                    <text>
+                        @using (Html.BeginForm("Return", "ApplicationRecords"))
+                        {
+                            <input type="hidden" name="Id" value="@item.Id" />
+                            <button type="submit" onclick="return confirm('确认操作？');">归还</button>
+                        }
+                    </text>
+                }
+                
             </td>
         </tr>
     }

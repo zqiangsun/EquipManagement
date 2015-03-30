@@ -60,24 +60,12 @@ namespace EquipManagement.Controllers
         //Get
         public ActionResult Index()
         {
-            return View(db.Users.ToList());
+            var teacherRole = db.Roles.Where(r => r.Name == "Teacher").First(); ;
+            var users=from user in db.Users where user.Roles.FirstOrDefault().RoleId == teacherRole.Id select user;
+            return View(users);
         }
 
-        // GET: Account/Details/5
-        public ActionResult Details(string id)
-        {            
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            ApplicationUser applicationUser = db.Users.Find(id);
-            if (applicationUser == null)
-            {
-                return HttpNotFound();
-            }
-            return View(applicationUser);
-        }
-  
+    
         // GET: Account/Edit/5
         public ActionResult Edit(string id)
         {
@@ -183,7 +171,7 @@ namespace EquipManagement.Controllers
 
         //
         // GET: /Account/Register
-        [AllowAnonymous]
+
         public ActionResult Register()
         {
             return View();
@@ -325,8 +313,9 @@ namespace EquipManagement.Controllers
         // POST: /Account/LogOff
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public ActionResult LogOff()
-        {
+        {            
             AuthenticationManager.SignOut();
             return RedirectToAction("Index", "Home");
         }

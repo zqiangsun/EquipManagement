@@ -6,10 +6,7 @@ using System.Web;
 
 namespace EquipManagement.Models
 {
-    public enum EquipmentStatus{
-        Usable,
-        Unavailable,
-    }
+ 
     public class Equipment
     {
         [Key]
@@ -31,7 +28,7 @@ namespace EquipManagement.Models
         [Display(Name = "使用记录")]
         public virtual ICollection<ApplicationRecord> Records { get; set; }
         [Display(Name="使用情况")]
-        public EquipmentStatus Status { get; set; }
+        public bool Status { get; set; }
 
     }
 }

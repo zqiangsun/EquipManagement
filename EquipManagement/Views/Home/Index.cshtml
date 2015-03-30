@@ -19,31 +19,25 @@
             <p>@Html.ActionLink("下一步»", "EquipSearch", new { }, new { @class = "btn btn-default" })</p>
         </div>
         <div class="col-md-4">
-            <h2>教师浏览</h2>
-            <p>点此通过教师检索仪器</p>
-            <p></p>
+           
         </div>
     }
     else if(User.IsInRole("Admin"))
     {
         <div class="col-md-4">
-            <h2>管理员登陆</h2>
+            <h2>用户信息</h2>
             <p>
-                ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-                enables a clean separation of concerns and gives you full control over markup
-                for enjoyable, agile development.
+                用户总数:@ViewBag.UserCount
+            </p>          
+        </div>
+        <div class="col-md-4">
+          <h2>设备类型</h2>
+            <p>
+                设备类型总数:@ViewBag.EquipmentTypeCount
             </p>
-            <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
         </div>
         <div class="col-md-4">
-            <h2>Get more libraries</h2>
-            <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-            <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-        </div>
-        <div class="col-md-4">
-            <h2>Web Hosting</h2>
-            <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-            <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
+        
         </div>
     }
    

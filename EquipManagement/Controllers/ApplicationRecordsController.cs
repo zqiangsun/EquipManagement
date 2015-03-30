@@ -10,7 +10,7 @@ using EquipManagement.Models;
 
 namespace EquipManagement.Controllers
 {
-    [Authorize(Roles="Teacher")]
+    [Authorize(Roles = "Teacher")]
     public class ApplicationRecordsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
@@ -84,15 +84,44 @@ namespace EquipManagement.Controllers
                 applicationRecord.IsApprove = false;
                 db.ApplicationRecords.Add(applicationRecord);
                 db.SaveChanges();
-                return RedirectToAction("Details", new { id=applicationRecord.Id});
+                return RedirectToAction("Details", new { id = applicationRecord.Id });
             }
 
             ViewBag.EquipmentId = new SelectList(db.Equipments, "Id", "Name", applicationRecord.EquipmentId);
             return View(applicationRecord);
-        }        
+        }
+        [HttpPost]
         public ActionResult Approve(int? id)
         {
-            return View();
+            var record = db.ApplicationRecords.Find(id);
+            var equipment = record.Equipment;
+            if (!Authorize(equipment.Id))
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
+            }
+            record.IsApprove = true;
+
+            equipment.Status = true;
+            db.Entry(record).State = EntityState.Modified;
+            db.Entry(equipment).State = EntityState.Modified;
+            db.SaveChanges();
+            return RedirectToAction("Index", new { id = equipment.Id });
+        }
+        [HttpPost]
+        public ActionResult Return(int? id)
+        {
+            var record = db.ApplicationRecords.Find(id);
+            var equipment = record.Equipment;
+            if (!Authorize(equipment.Id))
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
+            }
+            equipment.Status = false;
+            record.ReturnDate = DateTime.Now;
+            db.Entry(record).State = EntityState.Modified;
+            db.Entry(equipment).State = EntityState.Modified;
+            db.SaveChanges();
+            return RedirectToAction("Index", new { id = equipment.Id });
         }
         protected override void Dispose(bool disposing)
         {

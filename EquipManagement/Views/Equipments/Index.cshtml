@@ -49,15 +49,7 @@
                 }                                        
             </td>
             <td>
-                @if (item.Status == EquipManagement.Models.EquipmentStatus.Usable)
-                {
-                    <span>可用</span>
-                }
-                else
-                {
-                    <span>不可用</span>
-                }
-               
+                @Html.DisplayFor(modelItem => item.Status)
             </td>
             <td>
                 @Html.ActionLink("编辑", "Edit", new { id = item.Id }) |
