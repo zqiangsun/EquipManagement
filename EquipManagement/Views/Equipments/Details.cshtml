@@ -10,7 +10,7 @@
     <h4>设备</h4>
     <hr />
     <dl class="dl-horizontal">
-     
+
         <dt>
             @Html.DisplayNameFor(model => model.Name)
         </dt>
@@ -42,13 +42,14 @@
         <dd>
             <a href="javascript:void(0);" id="Image@(Model.Id)" data-id="@Model.Id" data-name="@Model.Name" data-toggle="modal" data-target="#myModal">查看</a>
         </dd>
-        <dt>
-            使用记录
-        </dt>
-        <dd>
-            @Html.ActionLink(String.Format("共{0}条使用记录",Model.Records.Count), "Index", "ApplicationRecords", new { id = Model.Id }, new { })
-        </dd>
-
+        @if (ViewBag.IsOwner) { 
+            <dt>
+                使用记录
+            </dt>
+            <dd>
+                @Html.ActionLink(String.Format("共{0}条使用记录", Model.Records.Count), "Index", "ApplicationRecords", new { id = Model.Id }, new { })
+            </dd>
+        }
     </dl>
 </div>
 
@@ -70,6 +71,8 @@
     </div>
 </div>
 <p>
-    @Html.ActionLink("编辑", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("返回列表", "Index")
+    @if (Request.UrlReferrer != null)
+    {
+        <a href="@Request.UrlReferrer">返回</a>
+    }  
 </p>

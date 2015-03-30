@@ -26,6 +26,7 @@ namespace EquipManagement.Controllers
             }
             return true;
         }
+        [AllowAnonymous]
         public FileContentResult GetImage(int id)
         {
             var equipment = db.Equipments.Find(id);
@@ -60,13 +61,19 @@ namespace EquipManagement.Controllers
             {
                 return HttpNotFound();
             }
+            ViewBag.IsOwner=false;
+            if (User.Identity.IsAuthenticated&&equipment.Owner.UserName==User.Identity.Name)
+            {
+
+                ViewBag.IsOwner = true;
+            }
+            
             return View(equipment);
         }
 
         // GET: Equipments/Create
         public ActionResult Create()
-        {
-            ViewBag.OwnerId = new SelectList(db.Users, "Id", "Name");
+        {         
             ViewBag.TypeId = new SelectList(db.EquipmentTypes, "Id", "Name");
             return View();
         }

@@ -15,7 +15,8 @@ namespace EquipManagement.Models
         [Display(Name="申请人")]
         [Required]
         public string Applicant { get; set; }
-        [Display(Name="联系方式")]
+        [Display(Name="电子邮箱")]
+        [EmailAddress]
         [Required]
         public string Contact { get; set; }
         [Display(Name="班级")]
@@ -23,12 +24,13 @@ namespace EquipManagement.Models
         public string StudentInfo { get; set; }
         [Display(Name="申请日期")]
         [Required]
+        [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd}")]
         public DateTime ApplicationDate { get; set; }
-        [Display(Name="归还日期")]      
+        [Display(Name="归还日期")]
+        [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd}")]
         public DateTime ReturnDate { get; set; }
         [Display(Name="审批通过")]
-        public string IsApprove { get; set; }
-        [Display(Name="实验结果")]
-        public string Result { get; set; }        
+        public bool IsApprove { get; set; }
+    
     }
 }

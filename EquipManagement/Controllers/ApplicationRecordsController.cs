@@ -9,23 +9,41 @@ using System.Web.Mvc;
 using EquipManagement.Models;
 
 namespace EquipManagement.Controllers
-{   
+{
+    [Authorize(Roles="Teacher")]
     public class ApplicationRecordsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
+        public bool Authorize(int? id)
+        {
+            var user = db.Users.Where(u => u.UserName == User.Identity.Name).First();
+            var equipment = db.Equipments.Find(id);
+            if (equipment.Owner.Id != user.Id)
+            {
+                return false;
+            }
+            return true;
+        }
+
         // GET: ApplicationRecords
+
         public ActionResult Index(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var applicationRecords = db.ApplicationRecords.Where(a=>a.EquipmentId==id).Include(a => a.Equipment);
+            if (!Authorize(id))
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
+            }
+            var applicationRecords = db.ApplicationRecords.Where(a => a.EquipmentId == id).Include(a => a.Equipment);
             return View(applicationRecords.ToList());
         }
 
         // GET: ApplicationRecords/Details/5
+        [AllowAnonymous]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -40,10 +58,15 @@ namespace EquipManagement.Controllers
             return View(applicationRecord);
         }
 
-        // GET: ApplicationRecords/Create
-        public ActionResult Create()
+        // GET: ApplicationRecords/Create/5
+        [AllowAnonymous]
+        public ActionResult Create(int? id)
         {
-            ViewBag.EquipmentId = new SelectList(db.Equipments, "Id", "Name");
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            ViewBag.EquipmentId = new SelectList(db.Equipments.Where(e => e.Id == id), "Id", "Name");
             return View();
         }
 
@@ -52,78 +75,25 @@ namespace EquipManagement.Controllers
         // 详细信息，请参阅 http://go.microsoft.com/fwlink/?LinkId=317598。
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,EquipmentId,ApplicantName,Contact,StudentInfo,ApplicationDate,ReturnDate,IsApprove,Conclusion")] ApplicationRecord applicationRecord)
+        [AllowAnonymous]
+        public ActionResult Create([Bind(Include = "Id,EquipmentId,Applicant,Contact,StudentInfo,ApplicationDate")] ApplicationRecord applicationRecord)
         {
             if (ModelState.IsValid)
             {
+                applicationRecord.ReturnDate = applicationRecord.ApplicationDate;
+                applicationRecord.IsApprove = false;
                 db.ApplicationRecords.Add(applicationRecord);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", new { id=applicationRecord.Id});
             }
 
             ViewBag.EquipmentId = new SelectList(db.Equipments, "Id", "Name", applicationRecord.EquipmentId);
             return View(applicationRecord);
-        }
-
-        // GET: ApplicationRecords/Edit/5
-        public ActionResult Edit(int? id)
+        }        
+        public ActionResult Approve(int? id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            ApplicationRecord applicationRecord = db.ApplicationRecords.Find(id);
-            if (applicationRecord == null)
-            {
-                return HttpNotFound();
-            }
-            ViewBag.EquipmentId = new SelectList(db.Equipments, "Id", "Name", applicationRecord.EquipmentId);
-            return View(applicationRecord);
+            return View();
         }
-
-        // POST: ApplicationRecords/Edit/5
-        // 为了防止“过多发布”攻击，请启用要绑定到的特定属性，有关 
-        // 详细信息，请参阅 http://go.microsoft.com/fwlink/?LinkId=317598。
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,EquipmentId,ApplicantName,Contact,StudentInfo,ApplicationDate,ReturnDate,IsApprove,Conclusion")] ApplicationRecord applicationRecord)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Entry(applicationRecord).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            ViewBag.EquipmentId = new SelectList(db.Equipments, "Id", "Name", applicationRecord.EquipmentId);
-            return View(applicationRecord);
-        }
-
-        // GET: ApplicationRecords/Delete/5
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            ApplicationRecord applicationRecord = db.ApplicationRecords.Find(id);
-            if (applicationRecord == null)
-            {
-                return HttpNotFound();
-            }
-            return View(applicationRecord);
-        }
-
-        // POST: ApplicationRecords/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
-        {
-            ApplicationRecord applicationRecord = db.ApplicationRecords.Find(id);
-            db.ApplicationRecords.Remove(applicationRecord);
-            db.SaveChanges();
-            return RedirectToAction("Index");
-        }
-
         protected override void Dispose(bool disposing)
         {
             if (disposing)

@@ -10,6 +10,7 @@ using EquipManagement.Models;
 
 namespace EquipManagement.Controllers
 {
+    [Authorize(Roles="Admin")]
     public class EquipmentTypesController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();

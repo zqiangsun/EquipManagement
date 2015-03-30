@@ -16,7 +16,12 @@
             <p>
                 点此检索仪器并提交使用申请。
             </p>
-            <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301865">下一步 &raquo;</a></p>
+            <p>@Html.ActionLink("下一步»", "EquipSearch", new { }, new { @class = "btn btn-default" })</p>
+        </div>
+        <div class="col-md-4">
+            <h2>教师浏览</h2>
+            <p>点此通过教师检索仪器</p>
+            <p></p>
         </div>
     }
     else if(User.IsInRole("Admin"))

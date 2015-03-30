@@ -257,10 +257,10 @@
     <Content Include="Views\Equipments\Edit.cshtml" />
     <Content Include="Views\Equipments\Index.cshtml" />
     <Content Include="Views\ApplicationRecords\Create.cshtml" />
-    <Content Include="Views\ApplicationRecords\Delete.cshtml" />
     <Content Include="Views\ApplicationRecords\Details.cshtml" />
-    <Content Include="Views\ApplicationRecords\Edit.cshtml" />
     <Content Include="Views\ApplicationRecords\Index.cshtml" />
+    <Content Include="Views\Home\TeacherSearch.cshtml" />
+    <Content Include="Views\Home\EquipSearch.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

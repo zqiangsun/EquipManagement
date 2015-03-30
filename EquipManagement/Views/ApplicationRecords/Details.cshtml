@@ -1,14 +1,13 @@
 ﻿@model EquipManagement.Models.ApplicationRecord
 
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = "申请详情";
 }
 
-<h2>Details</h2>
+<h2>申请详情</h2>
 
 <div>
-    <h4>ApplicationRecord</h4>
-    <hr />
+
     <dl class="dl-horizontal">
         <dt>
             @Html.DisplayNameFor(model => model.Equipment.Name)
@@ -19,11 +18,11 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.ApplicantName)
+            @Html.DisplayNameFor(model => model.Applicant)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.ApplicantName)
+            @Html.DisplayFor(model => model.Applicant)
         </dd>
 
         <dt>
@@ -55,10 +54,16 @@
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.ReturnDate)
+            @if (Model.ReturnDate == Model.ApplicationDate)
+            {
+                <span>尚未归还</span>
+            }
+            else
+            {
+                @Html.DisplayFor(model => model.ReturnDate)
+            }
         </dd>
-
-        <dt>
+        <dt>      
             @Html.DisplayNameFor(model => model.IsApprove)
         </dt>
 
@@ -66,17 +71,12 @@
             @Html.DisplayFor(model => model.IsApprove)
         </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Conclusion)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Conclusion)
-        </dd>
 
     </dl>
 </div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
+    @if (Request.UrlReferrer != null)
+    {
+        <a href="@Request.UrlReferrer">返回</a>
+    }
 </p>
